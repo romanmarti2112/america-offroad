@@ -8,15 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: { extend: {
-    colors: { ink:'#0D0D0D', steel:'#2B2B2B', ti:'#D1D5DB', fire:'#FF4500', terra:'#E63946' },
-    fontFamily: { display:['"Barlow Condensed"','sans-serif'], body:['Barlow','sans-serif'] }
-  } }
-}
-</script>
+<link rel="stylesheet" href="tw.css">
 <style>
   :root{
     --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -37,7 +29,7 @@ tailwind.config = {
   .ground{position:absolute;left:0;right:0;bottom:0;height:var(--ground);
           background:var(--noise),linear-gradient(180deg,#3d2617,#170d07);background-blend-mode:overlay;
           border-top:2px solid #6b4426;box-shadow:inset 0 14px 30px rgba(0,0,0,.6)}
-  #track{position:absolute;left:0;bottom:calc(var(--ground) - 34px);height:30px;width:0;z-index:5;
+  #track{position:absolute;left:0;bottom:calc(var(--ground) - 34px);height:30px;width:100%;clip-path:inset(0 100% 0 0);z-index:5;
          background-image:linear-gradient(135deg,rgba(8,4,2,1) 25%,transparent 25%),linear-gradient(225deg,rgba(8,4,2,1) 25%,transparent 25%);
          background-size:30px 30px;
          -webkit-mask-image:linear-gradient(90deg,transparent,#000 120px);mask-image:linear-gradient(90deg,transparent,#000 120px)}
@@ -137,7 +129,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <div class="absolute z-10 left-4 bottom-6 md:left-auto md:bottom-auto md:right-8 md:top-28 w-44 md:w-56 bg-black/50 backdrop-blur border border-steel p-4 font-display uppercase tracking-wider text-xs">
+  <div class="absolute z-10 left-4 bottom-6 md:left-auto md:bottom-auto md:right-8 md:top-28 w-44 md:w-56 bg-black/80 border border-steel p-4 font-display uppercase tracking-wider text-xs">
     <p class="text-ti/50 mb-3">Telemetría · recorrido</p>
     <div class="lg:mb-3"><div class="flex justify-between"><span>Delantero</span><span id="tF" class="text-white">0 mm</span></div>
       <div class="h-1.5 bg-steel mt-1 relative"><div id="bF" class="absolute top-0 bottom-0 left-1/2 bg-fire"></div></div></div>
@@ -313,7 +305,7 @@ const startX = () => innerWidth < 768 ? innerWidth - W() * 0.75 : innerWidth - W
 function renderHero() {
   heroWheel.style.transform = `translate3d(${wheel.x}px,0,0)`;
   heroSpin.style.transform = `rotate(${wheel.x / (Math.PI * W()) * 360}deg)`; // rodadura sin deslizar
-  track.style.width = Math.max(0, wheel.x + W() * 0.5) + 'px';
+  track.style.clipPath = `inset(0 ${Math.max(0, innerWidth - wheel.x - W() * 0.5)}px 0 0)`;
 }
 
 // intro: la rueda entra rodando
@@ -401,7 +393,7 @@ gsap.utils.toArray('.reveal').forEach(e => gsap.from(e, { y: 60, opacity: 0, dur
 gsap.fromTo('#marquee', { x: 0 }, { x: () => -(el('marquee').scrollWidth - innerWidth), ease: 'none',
   scrollTrigger: { trigger: '#marquee', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } });
 
-ScrollTrigger.create({ start: 80, onToggle: s => el('nav').classList.toggle('bg-ink/85', s.isActive) || el('nav').classList.toggle('backdrop-blur', s.isActive) });
+ScrollTrigger.create({ start: 80, onToggle: s => el('nav').classList.toggle('bg-ink/95', s.isActive) });
 
 /* ---------- RUTAS ---------- */
 // ponytail: dificultad y altitudes aproximadas, validar con el cliente
@@ -464,7 +456,7 @@ document.querySelectorAll('[data-wa]').forEach(a => setWa(a, a.dataset.msg));
 
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
 } }
 </script>
@@ -481,20 +473,19 @@ const views = [];
 
 function view(host, fov, update, shadows = false) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.shadowMap.enabled = shadows;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
   host.appendChild(renderer.domElement);
   const scene = new THREE.Scene();
   scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
   const camera = new THREE.PerspectiveCamera(fov, 1, .1, 200);
-  const v = { renderer, scene, camera, update, visible: false };
+  const v = { renderer, scene, camera, update, visible: false, dirty: true, key: () => 0 };
   new ResizeObserver(() => {
     const w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
-    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); v.dirty = true;
   }).observe(host);
   new IntersectionObserver(([e]) => v.visible = e.isIntersecting).observe(host);
   views.push(v);
@@ -531,6 +522,7 @@ wheelP.then(src => {
     spinner.rotation.x = -(wheel.x / (Math.PI * host.offsetWidth)) * TAU; // misma rodadura que la huella
   });
   v.scene.add(spinner);
+  v.key = () => wheel.x;
   lights(v.scene);
   v.camera.position.set(3.7, .35, -1.4);
   v.camera.lookAt(0, 0, 0);
@@ -556,6 +548,7 @@ if (matchMedia('(min-width: 1024px)').matches) load('models/truck.glb').then(tru
   truck.traverse(o => { if (o.isMesh) o.castShadow = true; });
 
   const v = view(host, 32, update, true);
+  v.key = () => sus.off;
   const { scene, camera } = v;
   scene.add(truck);
   truck.updateMatrixWorld(true);
@@ -587,7 +580,7 @@ if (matchMedia('(min-width: 1024px)').matches) load('models/truck.glb').then(tru
 
   const sun = lights(scene, 1.2);
   sun.position.set(5, 9, 6); sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 30 });
 
   const m4 = new THREE.Matrix4(), rq = new THREE.Quaternion(), rp = new THREE.Vector3(), rs = new THREE.Vector3();
@@ -597,7 +590,7 @@ if (matchMedia('(min-width: 1024px)').matches) load('models/truck.glb').then(tru
       const s = toSvg(pos.getX(i)) + o, z = pos.getZ(i);
       pos.setY(i, -h(s) * kh + (Math.abs(z) > 1.6 ? .12 * Math.sin(s * .07 + z * 1.9) : 0));
     }
-    pos.needsUpdate = true; geo.computeVertexNormals();
+    pos.needsUpdate = true; // flatShading: normales en el shader
 
     for (let i = 0; i < ROCKS; i++) {
       const span = 60 / k, s0 = i * 97.3, s = ((s0 - o) % span + span) % span; // posición en px, se desplaza con el terreno
@@ -631,6 +624,7 @@ else wheelP.then(src => {
   const wheelG = new THREE.Group(); wheelG.add(face);
 
   const v = view(host, 32, update, true);
+  v.key = () => sus.off;
   const { scene, camera } = v;
   scene.add(wheelG);
   scene.fog = new THREE.Fog(0x0D0D0D, 9, 22);
@@ -667,7 +661,7 @@ else wheelP.then(src => {
 
   const sun = lights(scene, 1.1);
   sun.position.set(4, 8, 5); sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 1, far: 25 });
 
   const P = (x, y, z) => new THREE.Vector3(x, y, z);
@@ -678,7 +672,7 @@ else wheelP.then(src => {
       const s = toSvg(pos.getX(i)) + o, z = pos.getZ(i);
       pos.setY(i, -h(s) * kh + (Math.abs(z) > .6 ? .1 * Math.sin(s * .09 + z * 2.3) : 0));
     }
-    pos.needsUpdate = true; geo.computeVertexNormals();
+    pos.needsUpdate = true; // flatShading: normales en el shader
     for (let i = 0; i < ROCKS; i++) {
       const span = 30 / k, s = ((i * 113.7 - o) % span + span) % span, x = s * k - 15, z = ((i * 37) % 11) - 5.5;
       if (Math.abs(z) < .7) { rocks.setMatrixAt(i, m4.makeScale(0, 0, 0)); continue; } // fuera de la huella
@@ -716,7 +710,13 @@ else wheelP.then(src => {
 });
 
 (function loop() {
-  for (const v of views) if (v.visible) { v.update(); v.renderer.render(v.scene, v.camera); }
+  for (const v of views) {
+    if (!v.visible) continue;
+    const k = v.key();
+    if (k === v.k && !v.dirty) continue; // nada cambió: no redibujar
+    v.k = k; v.dirty = false;
+    v.update(); v.renderer.render(v.scene, v.camera);
+  }
   requestAnimationFrame(loop);
 })();
 </script>

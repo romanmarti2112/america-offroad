@@ -14,3 +14,11 @@ python -m http.server 8766
 
 - "Offroad Truck Wheel" de Anderson Fogaça — https://sketchfab.com/3d-models/6ebc61a1e30a4472ae456e8153d0fc82
 - "Ford Ranger Offroad" de UltraPatcher — https://sketchfab.com/3d-models/7c94a52bf2f14060bd054f51f7b06d19
+
+## CSS
+
+Tailwind se compila a `tw.css` (no se usa el CDN en runtime). Si cambiás clases en `index.html`:
+
+```bash
+npx tailwindcss@3.4.17 -i tw.src.css -o tw.css --minify
+```
