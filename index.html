@@ -105,7 +105,7 @@
     </div>
   </div>
 
-  <div class="scroll-hint absolute z-20 left-1/2 -translate-x-1/2 bottom-6 font-display uppercase tracking-[.4em] text-xs text-ti/60 flex flex-col items-center gap-2">
+  <div class="scroll-hint absolute z-20 left-1/2 -translate-x-1/2 bottom-6 font-display uppercase tracking-[.4em] text-xs text-ti/60 hidden lg:flex flex-col items-center gap-2">
     Scroll para rodar
     <span class="block w-px h-10 bg-gradient-to-b from-fire to-transparent"></span>
   </div>
@@ -122,10 +122,10 @@
   <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-8 pt-24 md:pt-28">
     <p class="font-display uppercase tracking-[.35em] text-fire text-sm">02 · Suspensión</p>
     <h2 class="font-display font-900 uppercase text-white text-[clamp(2.4rem,6vw,5.5rem)] leading-[.9] mt-2">Suspensión que<br>lee el terreno</h2>
-    <div class="relative mt-6 h-24 max-w-md">
-      <div class="sus-step absolute inset-0"><h3 class="font-display font-700 text-2xl text-white uppercase">Kits de levante 2" a 4"</h3><p class="text-ti/70">Más despeje, ángulos de ataque y salida para pasar donde otros se quedan.</p></div>
-      <div class="sus-step absolute inset-0 opacity-0"><h3 class="font-display font-700 text-2xl text-white uppercase">Amortiguadores de alto recorrido</h3><p class="text-ti/70">Control en ripio, piedra y serrucho. Confort en ruta, firmeza en la travesía.</p></div>
-      <div class="sus-step absolute inset-0 opacity-0"><h3 class="font-display font-700 text-2xl text-white uppercase">Instalación en taller propio</h3><p class="text-ti/70">Montaje, regulación y asesoramiento según tu camioneta y tu uso.</p></div>
+    <div class="relative mt-6 lg:h-24 max-w-md space-y-3 lg:space-y-0">
+      <div class="sus-step lg:absolute lg:inset-0"><h3 class="font-display font-700 text-xl lg:text-2xl text-white uppercase">Kits de levante 2" a 4"</h3><p class="text-ti/70">Más despeje, ángulos de ataque y salida para pasar donde otros se quedan.</p></div>
+      <div class="sus-step lg:absolute lg:inset-0 lg:opacity-0"><h3 class="font-display font-700 text-xl lg:text-2xl text-white uppercase">Amortiguadores de alto recorrido</h3><p class="text-ti/70">Control en ripio, piedra y serrucho. Confort en ruta, firmeza en la travesía.</p></div>
+      <div class="sus-step lg:absolute lg:inset-0 lg:opacity-0"><h3 class="font-display font-700 text-xl lg:text-2xl text-white uppercase">Instalación en taller propio</h3><p class="text-ti/70">Montaje, regulación y asesoramiento según tu camioneta y tu uso.</p></div>
     </div>
   </div>
 
@@ -226,9 +226,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
+const mm = gsap.matchMedia(), DESKTOP = '(min-width: 1024px)', MOBILE = '(max-width: 1023px)'; // mobile/tablet: sin animaciones atadas al scroll
 
-// ponytail: número de WhatsApp desconocido; completar con formato internacional, ej. '5492611234567'
-const WA_NUMBER = '';
+// ponytail: NÚMERO DE PRUEBA, reemplazar por el real del cliente (formato 549 + área sin 0 + número sin 15)
+const WA_NUMBER = '5492610000000';
 const waLink = msg => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 const setWa = (a, msg = 'Hola America Off-Road! Quiero cotizar equipamiento 4x4.') => a.href = waLink(msg);
 
@@ -312,7 +314,7 @@ function renderHero() {
 gsap.fromTo(wheel, { x: () => -W() * 1.1 }, { x: startX, duration: 2, ease: 'power3.out', onUpdate: renderHero });
 gsap.from('.hero-copy > *', { y: 50, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', delay: .2 });
 
-gsap.timeline({
+mm.add(DESKTOP, () => gsap.timeline({
   scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=180%', pin: true, scrub: 1, invalidateOnRefresh: true }
 })
   .fromTo(wheel, { x: startX }, { x: () => innerWidth + 60, ease: 'none', duration: 1, immediateRender: false, onUpdate: renderHero }, 0)
@@ -321,7 +323,7 @@ gsap.timeline({
   .to('#ridgeFar', { x: () => -innerWidth * .12, ease: 'none', duration: 1 }, 0)
   .to('#ridgeMid', { x: () => -innerWidth * .35, ease: 'none', duration: 1 }, 0)
   .to('#ridgeNear', { x: () => -innerWidth * .8, ease: 'none', duration: 1 }, 0)
-  .to('.sun', { y: 60, ease: 'none', duration: 1 }, 0);
+  .to('.sun', { y: 60, ease: 'none', duration: 1 }, 0));
 
 /* ---------- SUSPENSIÓN: terreno procedural + amortiguadores ---------- */
 const XR = 480, XF = 960, XS = XF; // XS: rueda del coilover (mobile)
@@ -348,9 +350,16 @@ function renderSus() {
 renderSus();
 
 const steps = gsap.utils.toArray('.sus-step');
-const susTl = gsap.timeline({ scrollTrigger: { trigger: '#suspension', start: 'top top', end: '+=260%', pin: true, scrub: 1 } })
-  .to(sus, { off: 4200, ease: 'none', duration: 3, onUpdate: renderSus }, 0);
-steps.slice(1).forEach((s, i) => susTl.to(steps[i], { opacity: 0, y: -20, duration: .2 }, i + 1).fromTo(s, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .2 }, i + 1.1));
+mm.add(DESKTOP, () => {
+  const susTl = gsap.timeline({ scrollTrigger: { trigger: '#suspension', start: 'top top', end: '+=260%', pin: true, scrub: 1 } })
+    .to(sus, { off: 4200, ease: 'none', duration: 3, onUpdate: renderSus }, 0);
+  steps.slice(1).forEach((s, i) => susTl.to(steps[i], { opacity: 0, y: -20, duration: .2 }, i + 1).fromTo(s, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .2 }, i + 1.1));
+});
+// mobile: el terreno avanza solo mientras la sección está en pantalla (no depende del scroll)
+mm.add(MOBILE, () => {
+  const t = gsap.to(sus, { off: '+=60000', duration: 900, ease: 'none', onUpdate: renderSus, paused: true });
+  ScrollTrigger.create({ trigger: '#suspension', start: 'top bottom', end: 'bottom top', onToggle: s => s.isActive ? t.play() : t.pause() });
+});
 
 /* ---------- CATEGORÍAS ---------- */
 const CATS = [
@@ -385,13 +394,13 @@ document.querySelectorAll('.tilt').forEach(card => {
 gsap.from('.card', { y: 80, opacity: 0, rotateX: -25, duration: 1, stagger: .12, ease: 'power3.out', scrollTrigger: { trigger: '#cards', start: 'top 80%' } });
 
 /* ---------- Parallax genérico + reveals + marquee ---------- */
-gsap.utils.toArray('[data-speed]').forEach(e => gsap.to(e, {
+mm.add(DESKTOP, () => gsap.utils.toArray('[data-speed]').forEach(e => gsap.to(e, {
   y: () => -e.dataset.speed * 250, ease: 'none',
   scrollTrigger: { trigger: e.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true }
-}));
+})));
 gsap.utils.toArray('.reveal').forEach(e => gsap.from(e, { y: 60, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: e, start: 'top 85%' } }));
-gsap.fromTo('#marquee', { x: 0 }, { x: () => -(el('marquee').scrollWidth - innerWidth), ease: 'none',
-  scrollTrigger: { trigger: '#marquee', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } });
+mm.add(DESKTOP, () => gsap.fromTo('#marquee', { x: 0 }, { x: () => -(el('marquee').scrollWidth - innerWidth), ease: 'none',
+  scrollTrigger: { trigger: '#marquee', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } }));
 
 ScrollTrigger.create({ start: 80, onToggle: s => el('nav').classList.toggle('bg-ink/95', s.isActive) });
 
