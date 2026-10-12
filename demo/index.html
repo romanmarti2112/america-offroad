@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cumbre 4x4 · Equipa tu aventura (demo)</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Accesorios, suspensión y equipamiento off-road en Mendoza.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tw.css">
+<style>
+  :root{
+    --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --ground:16vh;
+  }
+  html{background:#0D0D0D;scroll-behavior:auto}
+  body{background:#0D0D0D;color:#D1D5DB;font-family:Barlow,sans-serif;overflow-x:hidden}
+  .grain{position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.07;background-image:var(--noise)}
+  .font-display{letter-spacing:.01em}
+
+  /* HERO */
+  .sky{background:
+      radial-gradient(ellipse 60% 45% at 72% 78%, rgba(255,69,0,.38), transparent 70%),
+      linear-gradient(180deg,#0D0D0D 0%,#1b100b 62%,#0D0D0D 100%)}
+  .sun{position:absolute;width:38vmin;height:38vmin;right:14vw;bottom:calc(var(--ground) + 18vh);border-radius:50%;
+       background:radial-gradient(circle,#ff7a3d 0%,#FF4500 40%,rgba(230,57,70,0) 70%);filter:blur(6px);opacity:.55}
+  .ridge{position:absolute;left:0;bottom:calc(var(--ground) - 2px);width:300vw;will-change:transform}
+  .ground{position:absolute;left:0;right:0;bottom:0;height:var(--ground);
+          background:var(--noise),linear-gradient(180deg,#3d2617,#170d07);background-blend-mode:overlay;
+          border-top:2px solid #6b4426;box-shadow:inset 0 14px 30px rgba(0,0,0,.6)}
+  #track{position:absolute;left:0;bottom:calc(var(--ground) - 34px);height:30px;width:100%;clip-path:inset(0 100% 0 0);z-index:5;
+         background-image:linear-gradient(135deg,rgba(8,4,2,1) 25%,transparent 25%),linear-gradient(225deg,rgba(8,4,2,1) 25%,transparent 25%);
+         background-size:30px 30px;
+         -webkit-mask-image:linear-gradient(90deg,transparent,#000 120px);mask-image:linear-gradient(90deg,transparent,#000 120px)}
+  #heroWheel{position:absolute;left:0;bottom:calc(var(--ground) - 34px);width:min(44vw,460px);aspect-ratio:1;z-index:10;will-change:transform}
+  #heroWheel .shadow{position:absolute;left:8%;right:8%;bottom:-4%;height:12%;border-radius:50%;background:rgba(0,0,0,.75);filter:blur(10px)}
+  #heroWheel .spin{position:absolute;inset:0;will-change:transform;filter:drop-shadow(0 20px 40px rgba(0,0,0,.6))}
+  @media (max-width:767px){ #heroWheel{width:min(68vw,380px)} #ridgeFar{height:34vh!important} #ridgeMid{height:26vh!important} #ridgeNear{height:16vh!important} }
+
+  .btn-fire{background:linear-gradient(135deg,#FF4500,#E63946);box-shadow:0 10px 30px -8px rgba(255,69,0,.6)}
+  .btn-fire:hover{filter:brightness(1.1);transform:translateY(-2px)}
+  .clip-cut{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+
+  /* CARDS */
+  .tilt{transform-style:preserve-3d;transition:transform .2s ease-out,border-color .3s;will-change:transform;
+        background:linear-gradient(160deg,#232323,#141414 60%);border:1px solid #2B2B2B}
+  .tilt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;
+        background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.14),transparent 45%)}
+  .tilt:hover{border-color:#FF4500}
+  .tilt:hover::after{opacity:1}
+  .tilt .pop{transform:translateZ(50px)}
+  .tilt .pop2{transform:translateZ(28px)}
+  .tilt:hover .mini-wheel{animation:spin 1.2s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .marquee{white-space:nowrap;-webkit-text-stroke:1px #3a3a3a;color:transparent}
+  .marquee span.on{color:#FF4500;-webkit-text-stroke:0}
+
+  .map-dark{filter:grayscale(1) invert(.92) contrast(.9) hue-rotate(180deg)}
+  .wa-pulse::before{content:"";position:absolute;inset:0;border-radius:inherit;background:#25D366;animation:pulse 2s infinite;z-index:-1}
+  @keyframes pulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.8);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.wa-pulse::before{animation:none}}
+</style>
+</head>
+<body class="antialiased">
+<div class="grain"></div>
+
+<div style="position:fixed;left:12px;bottom:12px;z-index:60;font:600 11px/1 sans-serif;letter-spacing:.08em;text-transform:uppercase;background:#000c;color:#fff;border:1px solid #fff3;padding:8px 12px;border-radius:99px;pointer-events:none">Demo de concepto · Viña Studio</div>
+<!-- NAV -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50 transition-colors duration-300">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+    <a href="#hero" class="flex items-center gap-2 font-display font-800 text-xl tracking-wider text-white whitespace-nowrap">
+      <span class="w-8 h-8 rounded-full border-[3px] border-fire grid place-items-center"><span class="w-2 h-2 rounded-full bg-fire"></span></span>
+      CUMBRE <span class="text-fire">4x4</span>
+    </a>
+    <nav class="hidden lg:flex items-center gap-8 font-display uppercase tracking-widest text-sm">
+      <a href="#suspension" class="hover:text-fire">Suspensión</a>
+      <a href="#categorias" class="hover:text-fire">Catálogo</a>
+      <a href="#rutas" class="hover:text-fire">Rutas</a>
+      <a href="#contacto" class="hover:text-fire">Contacto</a>
+    </nav>
+    <a data-wa class="btn-fire clip-cut px-4 py-2 font-display font-700 uppercase tracking-wider text-white text-sm transition" target="_blank" rel="noopener">Cotizar</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="hero" class="relative h-screen overflow-hidden sky">
+  <div class="sun"></div>
+  <svg id="ridgeFar" class="ridge" style="height:56vh" viewBox="0 0 2800 300" preserveAspectRatio="none"><path fill="#1d1310"/></svg>
+  <svg id="ridgeMid" class="ridge" style="height:40vh" viewBox="0 0 2800 300" preserveAspectRatio="none"><path fill="#141110"/></svg>
+  <svg id="ridgeNear" class="ridge" style="height:24vh" viewBox="0 0 2800 300" preserveAspectRatio="none"><path fill="#0e0c0b"/></svg>
+  <div class="ground"></div>
+  <div id="track"></div>
+  <div id="heroWheel"><div class="shadow"></div><div class="spin"></div></div>
+
+  <div class="hero-copy absolute z-20 left-4 md:left-[6vw] right-4 top-[16vh] md:top-[18vh] max-w-2xl">
+    <p class="font-display uppercase tracking-[.35em] text-fire text-sm md:text-base mb-4">Mendoza · Argentina</p>
+    <h1 class="font-display font-900 uppercase text-white leading-[.85] text-[clamp(3.2rem,9vw,8.5rem)]">
+      Equipa tu<br>aventura <span class="text-transparent bg-clip-text bg-gradient-to-r from-fire to-terra">4x4</span>
+    </h1>
+    <p class="mt-5 text-lg md:text-xl text-ti/80 max-w-md">Accesorios, suspensión y equipamiento off-road en Mendoza.</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="#categorias" class="btn-fire clip-cut px-7 py-4 font-display font-800 uppercase tracking-wider text-white text-lg transition">Explorar catálogo</a>
+      <a data-wa target="_blank" rel="noopener" class="clip-cut px-7 py-4 font-display font-700 uppercase tracking-wider text-lg border border-ti/30 text-ti hover:border-[#25D366] hover:text-[#25D366] transition">Cotizar por WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint absolute z-20 left-1/2 -translate-x-1/2 bottom-6 font-display uppercase tracking-[.4em] text-xs text-ti/60 hidden lg:flex flex-col items-center gap-2">
+    Scroll para rodar
+    <span class="block w-px h-10 bg-gradient-to-b from-fire to-transparent"></span>
+  </div>
+</section>
+
+<!-- SUSPENSION -->
+<section id="suspension" class="relative h-screen overflow-hidden bg-ink">
+  <svg id="susSvg" class="absolute inset-0 w-full h-full" viewBox="-150 -260 1350 780" preserveAspectRatio="xMaxYMax slice">
+    <g id="susRidge"><path fill="#171312"/></g>
+  </svg>
+  <div id="sus3d" class="absolute inset-0"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-ink via-transparent to-transparent pointer-events-none"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-8 pt-24 md:pt-28">
+    <p class="font-display uppercase tracking-[.35em] text-fire text-sm">02 · Suspensión</p>
+    <h2 class="font-display font-900 uppercase text-white text-[clamp(2.4rem,6vw,5.5rem)] leading-[.9] mt-2">Suspensión que<br>lee el terreno</h2>
+    <div class="relative mt-6 lg:h-24 max-w-md space-y-3 lg:space-y-0">
+      <div class="sus-step lg:absolute lg:inset-0"><h3 class="font-display font-700 text-xl lg:text-2xl text-white uppercase">Kits de levante 2" a 4"</h3><p class="text-ti/70">Más despeje, ángulos de ataque y salida para pasar donde otros se quedan.</p></div>
+      <div class="sus-step lg:absolute lg:inset-0 lg:opacity-0"><h3 class="font-display font-700 text-xl lg:text-2xl text-white uppercase">Amortiguadores de alto recorrido</h3><p class="text-ti/70">Control en ripio, piedra y serrucho. Confort en ruta, firmeza en la travesía.</p></div>
+      <div class="sus-step lg:absolute lg:inset-0 lg:opacity-0"><h3 class="font-display font-700 text-xl lg:text-2xl text-white uppercase">Instalación en taller propio</h3><p class="text-ti/70">Montaje, regulación y asesoramiento según tu camioneta y tu uso.</p></div>
+    </div>
+  </div>
+
+  <div class="absolute z-10 left-4 bottom-6 md:left-auto md:bottom-auto md:right-8 md:top-28 w-44 md:w-56 bg-black/80 border border-steel p-4 font-display uppercase tracking-wider text-xs">
+    <p class="text-ti/50 mb-3">Telemetría · recorrido</p>
+    <div class="lg:mb-3"><div class="flex justify-between"><span>Delantero</span><span id="tF" class="text-white">0 mm</span></div>
+      <div class="h-1.5 bg-steel mt-1 relative"><div id="bF" class="absolute top-0 bottom-0 left-1/2 bg-fire"></div></div></div>
+    <div class="hidden lg:block"><div class="flex justify-between"><span>Trasero</span><span id="tR" class="text-white">0 mm</span></div>
+      <div class="h-1.5 bg-steel mt-1 relative"><div id="bR" class="absolute top-0 bottom-0 left-1/2 bg-fire"></div></div></div>
+  </div>
+</section>
+
+<!-- CATEGORIAS -->
+<section id="categorias" class="relative py-28 md:py-36 overflow-hidden">
+  <svg data-speed="0.6" class="absolute -left-16 top-24 w-56 opacity-[.08] pointer-events-none" viewBox="0 0 100 80"><polygon points="10,70 0,40 20,12 55,0 85,15 100,50 80,78" fill="#D1D5DB"/></svg>
+  <svg data-speed="1.2" class="absolute right-0 top-1/3 w-40 opacity-[.07] pointer-events-none" viewBox="0 0 100 80"><polygon points="5,60 15,20 50,5 90,25 95,70 40,80" fill="#FF4500"/></svg>
+  <svg data-speed="0.3" class="absolute left-1/3 bottom-10 w-72 opacity-[.05] pointer-events-none" viewBox="0 0 100 80"><polygon points="0,80 12,35 40,10 70,22 100,80" fill="#D1D5DB"/></svg>
+
+  <div class="max-w-7xl mx-auto px-4 md:px-8 relative">
+    <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+      <div>
+        <p class="font-display uppercase tracking-[.35em] text-fire text-sm">03 · Catálogo</p>
+        <h2 class="font-display font-900 uppercase text-white text-[clamp(2.4rem,6vw,5.5rem)] leading-[.9] mt-2">Todo para<br>salir del asfalto</h2>
+      </div>
+      <p class="max-w-sm text-ti/70">Elegí una categoría y cotizá directo con el taller. Asesoramiento real, de gente que hace travesía.</p>
+    </div>
+
+    <div id="cards" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" style="perspective:1200px">
+      <!-- generated -->
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX BAND -->
+<section class="relative py-10 overflow-hidden border-y border-steel bg-[#0a0a0a]">
+  <div id="marquee" class="marquee font-display font-900 uppercase text-[clamp(3rem,10vw,9rem)] leading-none">
+    SUSPENSIÓN · <span class="on">NEUMÁTICOS</span> · BUMPERS · <span class="on">BARRAS LED</span> · CARPAS DE TECHO · <span class="on">TRAVESÍA</span> · SUSPENSIÓN · NEUMÁTICOS ·
+  </div>
+</section>
+
+<!-- RUTAS -->
+<section id="rutas" class="relative overflow-hidden border-t border-steel bg-[#0a0a0a]">
+  <div class="rutas-pin lg:h-screen flex flex-col justify-center py-24 lg:pt-16 lg:pb-0">
+    <div class="max-w-7xl w-full mx-auto px-4 md:px-8 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <p class="font-display uppercase tracking-[.35em] text-fire text-sm">04 · Rutas</p>
+        <h2 class="font-display font-900 uppercase text-white text-[clamp(2.4rem,6vw,5.5rem)] leading-[.9] mt-2">Mendoza es<br>nuestro banco de prueba</h2>
+      </div>
+      <div class="max-w-sm">
+        <p class="text-ti/70">Rutas clásicas de la provincia y el equipo que te recomendamos para cada una.</p>
+        <div class="mt-4 h-1 bg-steel"><div id="rutasBar" class="h-full bg-fire w-0"></div></div>
+      </div>
+    </div>
+    <div class="rutas-scroller overflow-x-auto lg:overflow-visible scroll-px-4 md:scroll-px-8 snap-x snap-mandatory lg:snap-none [scrollbar-width:none]">
+      <div id="rutasTrack" class="flex gap-5 px-4 md:px-8 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] w-max"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" class="relative py-28 md:py-36 border-t border-steel">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 grid lg:grid-cols-2 gap-10">
+    <div class="reveal">
+      <p class="font-display uppercase tracking-[.35em] text-fire text-sm">05 · Ubicación</p>
+      <h2 class="font-display font-900 uppercase text-white text-[clamp(2.4rem,6vw,5.5rem)] leading-[.9] mt-2">Vení al<br>taller</h2>
+      <div class="mt-8 space-y-5 text-lg">
+        <p><span class="block font-display uppercase tracking-widest text-xs text-ti/50">Dirección</span>
+          <span class="text-white">Av. Siempreviva 1234</span><br>Ciudad de Mendoza</p>
+        <p><span class="block font-display uppercase tracking-widest text-xs text-ti/50">Horarios</span>Lunes a viernes 9 a 18 h · Sábados 9 a 13 h</p>
+      </div>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a data-wa target="_blank" rel="noopener" class="clip-cut px-6 py-4 bg-[#25D366] text-black font-display font-800 uppercase tracking-wider">WhatsApp</a>
+        <span class="clip-cut px-6 py-4 border border-ti/30 font-display font-700 uppercase tracking-wider">@cumbre4x4</span>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Plaza+Independencia,+Mendoza" target="_blank" rel="noopener" class="clip-cut px-6 py-4 border border-ti/30 hover:border-fire hover:text-fire font-display font-700 uppercase tracking-wider transition">Cómo llegar</a>
+      </div>
+    </div>
+    <div class="reveal relative min-h-[380px] border border-steel overflow-hidden clip-cut">
+      <iframe title="Mapa Cumbre 4x4" class="map-dark absolute inset-0 w-full h-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=Plaza+Independencia,+Mendoza&z=15&output=embed"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-steel py-8 text-center font-display uppercase tracking-widest text-xs text-ti/40">
+  © Cumbre 4x4 · Mendoza · Sitio de ejemplo ficticio
+  <p class="mt-3 normal-case tracking-normal font-body">Modelos 3D:
+    <a class="underline" href="https://sketchfab.com/3d-models/6ebc61a1e30a4472ae456e8153d0fc82" target="_blank" rel="noopener">"Offroad Truck Wheel"</a> de Anderson Fogaça ·
+    <a class="underline" href="https://sketchfab.com/3d-models/7c94a52bf2f14060bd054f51f7b06d19" target="_blank" rel="noopener">"Ford Ranger Offroad"</a> de UltraPatcher ·
+    <a class="underline" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p>
+</footer>
+
+<!-- WhatsApp flotante -->
+<a data-wa target="_blank" rel="noopener" aria-label="Escribir por WhatsApp" class="wa-pulse fixed z-50 right-5 bottom-5 w-14 h-14 rounded-full bg-[#25D366] grid place-items-center shadow-xl isolate">
+  <svg viewBox="0 0 32 32" class="w-7 h-7" fill="#fff"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.7c-2 0-4-.6-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.7 10.7 0 1 1 16 26.7zm5.9-8c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.8 8.8 0 0 1-4.4-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3 14.4 14.4 0 0 0 5.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 0 0 2.1-1.5 2.7 2.7 0 0 0 .2-1.5c-.1-.2-.3-.3-.6-.4z"/></svg>
+</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
+const mm = gsap.matchMedia(), DESKTOP = '(min-width: 1024px)', MOBILE = '(max-width: 1023px)'; // mobile/tablet: sin animaciones atadas al scroll
+
+// ponytail: número de demo ficticio (formato 549 + área sin 0 + número sin 15)
+const WA_NUMBER = '5492610000000';
+const waLink = msg => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+const setWa = (a, msg = 'Hola Cumbre 4x4! Quiero cotizar equipamiento 4x4.') => a.href = waLink(msg);
+
+/* ---------- Rueda SVG procedural ---------- */
+const MODELS = [
+  {key:'bl', name:'Beadlock Raptor', tag:'Beadlock · Negro mate', rim:['#4a4a4a','#1a1a1a','#5a5a5a'], spokes:8, hubW:9, rimW:7, beadlock:true, lugs:28, accent:'#FF4500', tire:'35X12.50R17 M/T'},
+  {key:'bz', name:'Desert Bronze', tag:'6 rayos · Bronce', rim:['#c98f4c','#5c3a17','#a8743a'], spokes:6, hubW:12, rimW:10, beadlock:false, lugs:32, accent:'#E63946', tire:'285/70R17 A/T'},
+  {key:'cr', name:'Andes Titanio', tag:'10 rayos · Titanio', rim:['#f3f4f6','#7b7f86','#D1D5DB'], spokes:10, hubW:6, rimW:4.5, beadlock:false, lugs:36, accent:'#2B2B2B', tire:'265/65R18 A/T'},
+  {key:'rd', name:'Aconcagua Red', tag:'Beadlock · Rojo terracota', rim:['#ff5a1f','#7f1a12','#E63946'], spokes:5, hubW:14, rimW:12, beadlock:true, lugs:24, accent:'#0D0D0D', tire:'37X13.50R17 M/T'},
+];
+
+const rad = d => d * Math.PI / 180;
+const P = (r, a) => [200 + r * Math.cos(a), 200 + r * Math.sin(a)];
+const fx = p => p.map(v => v.toFixed(1)).join(',');
+
+function wheelSVG(m, id, attrs = '') {
+  let tread = '', spokes = '', bolts = '', nuts = '';
+  for (let i = 0; i < m.lugs; i++) {
+    const big = i % 2 === 0;
+    tread += `<rect x="${big?185:190}" y="${big?2:9}" width="${big?30:20}" height="${big?28:22}" rx="3" fill="#1d1d1d" stroke="#000" stroke-width="2" transform="rotate(${i*360/m.lugs} 200 200)"/>`;
+  }
+  for (let i = 0; i < m.spokes; i++) {
+    const a = rad(i * 360 / m.spokes - 90);
+    const pts = [P(42, a - rad(m.hubW)), P(116, a - rad(m.rimW)), P(116, a + rad(m.rimW)), P(42, a + rad(m.hubW))];
+    spokes += `<polygon points="${pts.map(fx).join(' ')}" fill="url(#${id}m)" stroke="rgba(0,0,0,.55)" stroke-width="2"/>`;
+  }
+  if (m.beadlock) for (let i = 0; i < 24; i++) { const [x, y] = P(124, rad(i * 15)); bolts += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="#cfd2d6" stroke="#111"/>`; }
+  for (let i = 0; i < 6; i++) { const [x, y] = P(26, rad(i * 60)); nuts += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="#e5e7eb" stroke="#111"/>`; }
+  const label = `CUMBRE 4x4 · ${m.tire} · `;
+  return `<svg viewBox="0 0 400 400" ${attrs} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="${id}m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${m.rim[0]}"/><stop offset=".55" stop-color="${m.rim[1]}"/><stop offset="1" stop-color="${m.rim[2]}"/></linearGradient>
+      <radialGradient id="${id}t"><stop offset=".72" stop-color="#202020"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>
+      <path id="${id}p" d="M200,200 m-160,0 a160,160 0 1,1 320,0 a160,160 0 1,1 -320,0"/>
+    </defs>
+    ${tread}
+    <circle cx="200" cy="200" r="184" fill="url(#${id}t)" stroke="#000" stroke-width="3"/>
+    <circle cx="200" cy="200" r="174" fill="none" stroke="#2a2a2a" stroke-width="5" stroke-dasharray="8 12"/>
+    <text font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="19" letter-spacing="4" fill="#3d3d3d"><textPath href="#${id}p">${label}${label}</textPath></text>
+    <circle cx="200" cy="200" r="135" fill="#050505"/>
+    <circle cx="200" cy="200" r="131" fill="url(#${id}m)"/>
+    <circle cx="200" cy="200" r="${m.beadlock ? 117 : 122}" fill="#070707"/>
+    ${spokes}${bolts}
+    <circle cx="200" cy="200" r="44" fill="url(#${id}m)" stroke="#000" stroke-width="2"/>
+    ${nuts}
+    <circle cx="200" cy="200" r="13" fill="${m.accent}" stroke="#000" stroke-width="2"/>
+    <circle cx="200" cy="200" r="131" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+  </svg>`;
+}
+
+/* ---------- Crestas montañosas (periódicas, para parallax) ---------- */
+function ridge(base, amp, k, seed, w = 2800, H = 300) {
+  let d = `M0 ${H}`;
+  for (let x = 0; x <= w; x += 10) {
+    const t = x / 1400 * Math.PI * 2;
+    const y = base - amp * (.5 * Math.sin(t * k[0] + seed) + .3 * Math.sin(t * k[1] + seed * 2) + .25 * Math.abs(Math.sin(t * k[2] + seed * 3)) + .07 * Math.sin(t * k[3]));
+    d += ` L${x} ${y.toFixed(1)}`;
+  }
+  return d + ` L${w} ${H} Z`;
+}
+document.querySelector('#ridgeFar path').setAttribute('d', ridge(150, 120, [2,5,9,61], 1));
+document.querySelector('#ridgeMid path').setAttribute('d', ridge(190, 90, [3,7,13,83], 2));
+document.querySelector('#ridgeNear path').setAttribute('d', ridge(240, 55, [5,11,23,127], 3));
+
+/* ---------- HERO: rueda que rueda + huella ---------- */
+const heroWheel = document.getElementById('heroWheel');
+const heroSpin = heroWheel.querySelector('.spin');
+const track = document.getElementById('track');
+heroSpin.innerHTML = wheelSVG(MODELS[0], 'hw', 'width="100%" height="100%"');
+
+const wheel = { x: 0 };
+const W = () => heroWheel.offsetWidth;
+const startX = () => innerWidth < 768 ? innerWidth - W() * 0.75 : innerWidth - W() * 1.05;
+function renderHero() {
+  heroWheel.style.transform = `translate3d(${wheel.x}px,0,0)`;
+  heroSpin.style.transform = `rotate(${wheel.x / (Math.PI * W()) * 360}deg)`; // rodadura sin deslizar
+  track.style.clipPath = `inset(0 ${Math.max(0, innerWidth - wheel.x - W() * 0.5)}px 0 0)`;
+}
+
+// intro: la rueda entra rodando
+gsap.fromTo(wheel, { x: () => -W() * 1.1 }, { x: startX, duration: 2, ease: 'power3.out', onUpdate: renderHero });
+gsap.from('.hero-copy > *', { y: 50, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', delay: .2 });
+
+mm.add(DESKTOP, () => gsap.timeline({
+  scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=180%', pin: true, scrub: 1, invalidateOnRefresh: true }
+})
+  .fromTo(wheel, { x: startX }, { x: () => innerWidth + 60, ease: 'none', duration: 1, immediateRender: false, onUpdate: renderHero }, 0)
+  .to('.hero-copy', { y: -140, opacity: 0, ease: 'none', duration: .45 }, 0)
+  .to('.scroll-hint', { opacity: 0, duration: .1 }, 0)
+  .to('#ridgeFar', { x: () => -innerWidth * .12, ease: 'none', duration: 1 }, 0)
+  .to('#ridgeMid', { x: () => -innerWidth * .35, ease: 'none', duration: 1 }, 0)
+  .to('#ridgeNear', { x: () => -innerWidth * .8, ease: 'none', duration: 1 }, 0)
+  .to('.sun', { y: 60, ease: 'none', duration: 1 }, 0));
+
+/* ---------- SUSPENSIÓN: terreno procedural + amortiguadores ---------- */
+const XR = 480, XF = 960, XS = XF; // XS: rueda del coilover (mobile)
+const h = x => 26 * Math.sin(x / 95) + 15 * Math.sin(x / 41 + 1.3) + 32 * Math.sin(x / 310 + .5);
+const hs = x => { let s = 0; for (let i = -4; i <= 4; i++) s += h(x + i * 40); return s / 9; }; // carrocería = terreno suavizado
+
+document.querySelector('#susRidge path').setAttribute('d', ridge(170, 110, [2,5,11,71], 4, 2800, 300).replace(/(\d+\.?\d*) (\d+\.?\d*)/g, (m, a, b) => `${a} ${(+b * 1.2 + 40).toFixed(1)}`));
+
+const sus = { off: 0 };
+const el = id => document.getElementById(id);
+const bars = { F: [el('tF'), el('bF')], R: [el('tR'), el('bR')] };
+function setTravel(k, d) {
+  const mm = Math.round(d * 4.4); // + compresión / - extensión (px de terreno -> mm)
+  bars[k][0].textContent = (mm > 0 ? '+' : '') + mm + ' mm';
+  const pct = Math.min(50, Math.abs(mm) / 3);
+  Object.assign(bars[k][1].style, mm >= 0 ? { left: '50%', right: (50 - pct) + '%' } : { right: '50%', left: (50 - pct) + '%' });
+}
+function renderSus() {
+  const o = sus.off;
+  el('susRidge').setAttribute('transform', `translate(${-150 - ((o * .15) % 1400)} 0)`);
+  setTravel('R', hs(XR + o) - h(XR + o));
+  setTravel('F', hs(XF + o) - h(XF + o));
+}
+renderSus();
+
+const steps = gsap.utils.toArray('.sus-step');
+mm.add(DESKTOP, () => {
+  const susTl = gsap.timeline({ scrollTrigger: { trigger: '#suspension', start: 'top top', end: '+=260%', pin: true, scrub: 1 } })
+    .to(sus, { off: 4200, ease: 'none', duration: 3, onUpdate: renderSus }, 0);
+  steps.slice(1).forEach((s, i) => susTl.to(steps[i], { opacity: 0, y: -20, duration: .2 }, i + 1).fromTo(s, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .2 }, i + 1.1));
+});
+// mobile: el terreno avanza solo mientras la sección está en pantalla (no depende del scroll)
+mm.add(MOBILE, () => {
+  const t = gsap.to(sus, { off: '+=60000', duration: 900, ease: 'none', onUpdate: renderSus, paused: true });
+  ScrollTrigger.create({ trigger: '#suspension', start: 'top bottom', end: 'bottom top', onToggle: s => s.isActive ? t.play() : t.pause() });
+});
+
+/* ---------- CATEGORÍAS ---------- */
+const CATS = [
+  { t: 'Suspensión & Kit de Levante', d: 'Kits 2" a 4", amortiguadores, espirales y elásticos reforzados.',
+    icon: `<svg viewBox="0 0 64 64" class="w-16 h-16" fill="none" stroke="#FF4500" stroke-width="3"><rect x="24" y="4" width="16" height="8" rx="2"/><polyline points="20,16 44,21 20,26 44,31 20,36 44,41 20,46"/><line x1="32" y1="46" x2="32" y2="60" stroke="#D1D5DB"/><rect x="24" y="54" width="16" height="6" rx="2" stroke="#D1D5DB"/></svg>` },
+  { t: 'Llantas & Neumáticos Off-Road', d: 'M/T y A/T, llantas beadlock y de aleación. Balanceo y alineación.',
+    icon: `<div class="mini-wheel w-16 h-16">${wheelSVG(MODELS[3], 'cw', 'width="100%" height="100%"')}</div>` },
+  { t: 'Protecciones, Bumpers & Barras LED', d: 'Paragolpes de acero, cubrecárter, estribos tubulares e iluminación LED.',
+    icon: `<svg viewBox="0 0 64 64" class="w-16 h-16" fill="none" stroke-width="3"><rect x="6" y="10" width="52" height="10" rx="2" stroke="#FF4500"/><line x1="12" y1="15" x2="52" y2="15" stroke="#fff6d1" stroke-dasharray="3 3"/><path d="M4 34 h56 l-6 14 H10z" stroke="#D1D5DB"/><circle cx="20" cy="41" r="3" stroke="#FF4500"/><circle cx="44" cy="41" r="3" stroke="#FF4500"/></svg>` },
+  { t: 'Travesía & Carpas de Techo', d: 'Carpas de techo, barras portaequipaje, toldos y equipo de recuperación.',
+    icon: `<svg viewBox="0 0 64 64" class="w-16 h-16" fill="none" stroke-width="3"><path d="M8 34 L32 10 L56 34 Z" stroke="#FF4500"/><line x1="32" y1="10" x2="32" y2="34" stroke="#FF4500"/><rect x="4" y="34" width="56" height="6" stroke="#D1D5DB"/><path d="M8 40 v10 h48 v-10" stroke="#D1D5DB"/><circle cx="18" cy="54" r="5" stroke="#D1D5DB"/><circle cx="46" cy="54" r="5" stroke="#D1D5DB"/></svg>` },
+];
+document.getElementById('cards').innerHTML = CATS.map((c, i) => `
+  <article class="tilt card relative rounded-sm p-7 min-h-[360px] flex flex-col">
+    <span class="pop2 font-display font-900 text-6xl text-steel">0${i + 1}</span>
+    <div class="pop mt-6">${c.icon}</div>
+    <h3 class="pop2 font-display font-800 uppercase text-2xl text-white mt-6 leading-tight">${c.t}</h3>
+    <p class="pop2 text-ti/65 mt-3 text-[15px]">${c.d}</p>
+    <a data-wa data-msg="Hola! Quiero cotizar: ${c.t}" target="_blank" rel="noopener" class="pop2 mt-auto pt-6 font-display font-700 uppercase tracking-widest text-fire text-sm">Cotizar →</a>
+  </article>`).join('');
+
+document.querySelectorAll('.tilt').forEach(card => {
+  card.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    card.style.transform = `rotateY(${x * 16}deg) rotateX(${-y * 16}deg)`;
+    card.style.setProperty('--gx', (x + .5) * 100 + '%');
+    card.style.setProperty('--gy', (y + .5) * 100 + '%');
+  });
+  card.addEventListener('pointerleave', () => card.style.transform = '');
+});
+gsap.from('.card', { y: 80, opacity: 0, rotateX: -25, duration: 1, stagger: .12, ease: 'power3.out', scrollTrigger: { trigger: '#cards', start: 'top 80%' } });
+
+/* ---------- Parallax genérico + reveals + marquee ---------- */
+mm.add(DESKTOP, () => gsap.utils.toArray('[data-speed]').forEach(e => gsap.to(e, {
+  y: () => -e.dataset.speed * 250, ease: 'none',
+  scrollTrigger: { trigger: e.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true }
+})));
+gsap.utils.toArray('.reveal').forEach(e => gsap.from(e, { y: 60, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: e, start: 'top 85%' } }));
+mm.add(DESKTOP, () => gsap.fromTo('#marquee', { x: 0 }, { x: () => -(el('marquee').scrollWidth - innerWidth), ease: 'none',
+  scrollTrigger: { trigger: '#marquee', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } }));
+
+ScrollTrigger.create({ start: 80, onToggle: s => el('nav').classList.toggle('bg-ink/95', s.isActive) });
+
+/* ---------- RUTAS ---------- */
+// ponytail: dificultad y altitudes aproximadas, validar con el cliente
+const RUTAS = [
+  { n: 'Caracoles de Villavicencio', z: 'Las Heras → Uspallata', alt: '≈ 3.000 m', t: 'Ripio de montaña · curvas cerradas', d: 2, eq: ['Neumáticos A/T', 'Barra LED', 'Protector de cárter'], seed: 1 },
+  { n: 'Vallecitos', z: 'Cordón del Plata · Luján de Cuyo', alt: '≈ 2.900 m', t: 'Ripio suelto · pendientes', d: 3, eq: ['Kit de levante 2"', 'Neumáticos M/T', 'Eslinga y grilletes'], seed: 2 },
+  { n: 'Cañón del Atuel', z: 'San Rafael', alt: '≈ 1.000 m', t: 'Ripio · polvo · cornisas', d: 2, eq: ['Amortiguadores', 'Snorkel', 'Carpa de techo'], seed: 3 },
+  { n: 'Laguna del Diamante', z: 'San Carlos · temporada de verano', alt: '≈ 3.300 m', t: 'Vados · ripio · altura', d: 4, eq: ['Kit de levante 3"', 'Malacate', 'Compresor de aire'], seed: 4 },
+  { n: 'La Payunia', z: 'Malargüe', alt: '≈ 1.800 m', t: 'Arena volcánica · huellas', d: 5, eq: ['Neumáticos M/T', 'Planchas de desencaje', 'Bumper con malacate'], seed: 5 },
+];
+const prof = sd => {
+  let d = 'M0 60';
+  for (let x = 0; x <= 300; x += 6) {
+    const t = x / 300 * Math.PI * 2;
+    d += ` L${x} ${(52 - 20 * (.6 + .4 * Math.sin(t * (1 + sd % 3) + sd)) * Math.sin(Math.PI * x / 300) - 8 * Math.abs(Math.sin(t * (4 + sd) + sd))).toFixed(1)}`;
+  }
+  return d + ' L300 60 Z';
+};
+el('rutasTrack').innerHTML = RUTAS.map((r, i) => `
+  <article class="ruta snap-start shrink-0 w-[82vw] sm:w-[400px] border border-steel bg-gradient-to-b from-[#1a1a1a] to-[#0f0f0f] p-6 md:p-7 flex flex-col">
+    <div class="flex justify-between items-start">
+      <span class="font-display font-900 text-5xl text-steel">0${i + 1}</span>
+      <span class="font-display uppercase tracking-widest text-xs text-fire border border-fire/40 px-2 py-1">${r.alt}</span>
+    </div>
+    <svg viewBox="0 0 300 60" class="w-full h-16 mt-4" preserveAspectRatio="none"><defs><linearGradient id="pg${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF4500" stop-opacity=".5"/><stop offset="1" stop-color="#FF4500" stop-opacity="0"/></linearGradient></defs><path d="${prof(r.seed)}" fill="url(#pg${i})" stroke="#FF4500" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>
+    <h3 class="font-display font-800 uppercase text-3xl text-white mt-4 leading-none">${r.n}</h3>
+    <p class="text-ti/50 text-sm mt-1">${r.z}</p>
+    <p class="text-ti/80 mt-3">${r.t}</p>
+    <div class="flex items-center gap-1.5 mt-4" aria-label="Dificultad ${r.d} de 5">
+      <span class="font-display uppercase tracking-widest text-xs text-ti/50 mr-2">Dificultad</span>
+      ${[1, 2, 3, 4, 5].map(k => `<span class="w-5 h-5 rounded-full border-[3px] ${k <= r.d ? 'border-fire bg-fire/20' : 'border-steel'}"></span>`).join('')}
+    </div>
+    <ul class="mt-5 pt-5 border-t border-steel space-y-1.5 text-sm">${r.eq.map(e => `<li class="flex gap-2"><span class="text-fire">▸</span>${e}</li>`).join('')}</ul>
+    <a data-wa data-msg="Hola! Voy a hacer ${r.n}. ¿Qué equipo me recomiendan?" target="_blank" rel="noopener" class="mt-6 font-display font-700 uppercase tracking-widest text-fire text-sm">Armá tu equipo →</a>
+  </article>`).join('');
+
+ScrollTrigger.matchMedia({
+  '(min-width: 1024px)': () => {
+    const track = el('rutasTrack');
+    gsap.to(track, {
+      x: () => -(track.scrollWidth - innerWidth), ease: 'none',
+      scrollTrigger: {
+        trigger: '#rutas', start: 'top top', end: () => '+=' + (track.scrollWidth - innerWidth), pin: '.rutas-pin', scrub: 1, invalidateOnRefresh: true,
+        onUpdate: s => el('rutasBar').style.width = s.progress * 100 + '%'
+      }
+    });
+  },
+  '(max-width: 1023px)': () => {
+    const sc = document.querySelector('.rutas-scroller');
+    const f = () => el('rutasBar').style.width = (sc.scrollLeft / (sc.scrollWidth - sc.clientWidth) * 100 || 0) + '%';
+    sc.addEventListener('scroll', f, { passive: true });
+    return () => sc.removeEventListener('scroll', f);
+  }
+});
+gsap.from('.ruta', { y: 60, opacity: 0, duration: .9, stagger: .1, ease: 'power3.out', scrollTrigger: { trigger: '#rutas', start: 'top 70%' } });
+
+/* WhatsApp links */
+document.querySelectorAll('[data-wa]').forEach(a => setWa(a, a.dataset.msg));
+</script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+/* ---------- Modelos 3D reales (Three.js). Lee el estado de scroll del script clásico: wheel, sus, h, hs, XS ---------- */
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const load = url => loader.loadAsync(url).then(g => g.scene);
+const views = [];
+
+function view(host, fov, update, shadows = false) {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = shadows;
+  renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
+  host.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+  const camera = new THREE.PerspectiveCamera(fov, 1, .1, 200);
+  const v = { renderer, scene, camera, update, visible: false, dirty: true, key: () => 0 };
+  new ResizeObserver(() => {
+    const w = host.clientWidth, h = host.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); v.dirty = true;
+  }).observe(host);
+  new IntersectionObserver(([e]) => v.visible = e.isIntersecting).observe(host);
+  views.push(v);
+  return v;
+}
+const lights = (scene, k = 1) => {
+  const key = new THREE.DirectionalLight(0xffc49a, 2.2 * k); key.position.set(3, 5, 4);
+  const rim = new THREE.DirectionalLight(0xff4500, 4 * k); rim.position.set(-4, 2, -3);
+  scene.add(key, rim, new THREE.HemisphereLight(0xffe0c8, 0x1a0f08, .5 * k));
+  return key;
+};
+
+// Rueda: centrada, diámetro 2, eje en X. Devuelve el grupo que gira.
+function makeWheel(src, ownMaterials) {
+  const m = src.clone(true);
+  const box = new THREE.Box3().setFromObject(m), size = box.getSize(new THREE.Vector3());
+  m.position.sub(box.getCenter(new THREE.Vector3()));
+  const spinner = new THREE.Group();
+  spinner.add(m);
+  spinner.scale.setScalar(2 / Math.max(size.x, size.y, size.z));
+  const mats = [];
+  if (ownMaterials) m.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); mats.push(o.material); } });
+  return { spinner, mats };
+}
+
+const TAU = Math.PI * 2;
+const wheelP = load('../models/wheel.glb');
+
+/* HERO */
+wheelP.then(src => {
+  const host = document.getElementById('heroWheel');
+  const { spinner } = makeWheel(src);
+  const v = view(host, 30, () => {
+    spinner.rotation.x = -(wheel.x / (Math.PI * host.offsetWidth)) * TAU; // misma rodadura que la huella
+  });
+  v.scene.add(spinner);
+  v.key = () => wheel.x;
+  lights(v.scene);
+  v.camera.position.set(3.7, .35, -1.4);
+  v.camera.lookAt(0, 0, 0);
+  host.querySelector('.spin').style.display = 'none'; // reemplaza el SVG
+});
+
+/* SUSPENSIÓN: camioneta real sobre terreno procedural */
+if (matchMedia('(min-width: 1024px)').matches) load('../models/truck.glb').then(truck => {
+  const host = document.getElementById('sus3d');
+  const node = n => truck.getObjectByName(n);
+  const WR = ['Roata_Stanga_Spate', 'Roata_Dreapta_Spate'], WF = ['Roata_Stanga_Fata', 'Roata_Dreapta_Fata'];
+  const wp = n => node(n).getWorldPosition(new THREE.Vector3());
+  const avg = ns => ns.map(wp).reduce((a, b) => a.add(b)).multiplyScalar(1 / ns.length);
+
+  // orientar: frente hacia +X, ejes centrados en el origen, ruedas apoyadas en y=0
+  truck.updateMatrixWorld(true);
+  let fwd = avg(WF).sub(avg(WR));
+  truck.rotation.y = Math.atan2(fwd.z, fwd.x);
+  truck.updateMatrixWorld(true);
+  const rear = avg(WR), front = avg(WF), wb = front.distanceTo(rear);
+  const R = new THREE.Box3().setFromObject(node(WR[0])).getSize(new THREE.Vector3()).y / 2;
+  truck.position.sub(new THREE.Vector3((rear.x + front.x) / 2, rear.y - R, (rear.z + front.z) / 2));
+  truck.traverse(o => { if (o.isMesh) o.castShadow = true; });
+
+  const v = view(host, 32, update, true);
+  v.key = () => sus.off;
+  const { scene, camera } = v;
+  scene.add(truck);
+  truck.updateMatrixWorld(true);
+
+  // separar ruedas (siguen el terreno) de la carrocería (sigue el terreno suavizado)
+  const X = new THREE.Vector3(1, 0, 0), q = new THREE.Quaternion();
+  const wheels = [...WR, ...WF].map(n => {
+    const o = node(n), g = new THREE.Group();
+    o.getWorldPosition(g.position); scene.add(g); g.attach(o);
+    const ax = X.clone().applyQuaternion(o.getWorldQuaternion(new THREE.Quaternion()));
+    return { o, g, q0: o.quaternion.clone(), y0: g.position.y, xs: WF.includes(n) ? XF : XR, sgn: -Math.sign(ax.z) || 1 };
+  });
+  [['hub_rf', WF[1]], ['hub_lf', WF[0]]].forEach(([hub, w]) => node(hub) && wheels.find(x => x.o.name === w).g.attach(node(hub)));
+  const body = new THREE.Group(); body.position.set(0, R, 0); scene.add(body);
+  const root = node('Ford_Ranger') || node(WR[0]).parent;
+  [...root.children].forEach(c => body.attach(c));
+
+  // terreno: 1 px del perfil SVG = k metros; amplitud vertical atenuada
+  const k = wb / (XF - XR), kh = k * .6;
+  const toSvg = x => XR + (x + wb / 2) / k;
+  const geo = new THREE.PlaneGeometry(60, 16, 240, 8); geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position;
+  const ground = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x2e1c10, roughness: 1, flatShading: true }));
+  ground.receiveShadow = true;
+  const ROCKS = 26, rocks = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(.22, 0), new THREE.MeshStandardMaterial({ color: 0x3b2a20, roughness: .9, flatShading: true }), ROCKS);
+  rocks.castShadow = rocks.receiveShadow = true;
+  scene.add(ground, rocks);
+  scene.fog = new THREE.Fog(0x0D0D0D, 12, 30);
+
+  const sun = lights(scene, 1.2);
+  sun.position.set(5, 9, 6); sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 30 });
+
+  const m4 = new THREE.Matrix4(), rq = new THREE.Quaternion(), rp = new THREE.Vector3(), rs = new THREE.Vector3();
+  function update() {
+    const o = sus.off;
+    for (let i = 0; i < pos.count; i++) {
+      const s = toSvg(pos.getX(i)) + o, z = pos.getZ(i);
+      pos.setY(i, -h(s) * kh + (Math.abs(z) > 1.6 ? .12 * Math.sin(s * .07 + z * 1.9) : 0));
+    }
+    pos.needsUpdate = true; // flatShading: normales en el shader
+
+    for (let i = 0; i < ROCKS; i++) {
+      const span = 60 / k, s0 = i * 97.3, s = ((s0 - o) % span + span) % span; // posición en px, se desplaza con el terreno
+      const x = s * k - 30, z = ((i * 37) % 13) - 6.5;
+      if (Math.abs(z) < 1.4) { rocks.setMatrixAt(i, m4.makeScale(0, 0, 0)); continue; } // fuera de la huella de las ruedas
+      rp.set(x, -h(toSvg(x) + o) * kh, z); rs.setScalar(.6 + (i % 5) * .35); rq.setFromAxisAngle(X, i);
+      rocks.setMatrixAt(i, m4.compose(rp, rq, rs));
+    }
+    rocks.instanceMatrix.needsUpdate = true;
+
+    const roll = o * k / R;
+    wheels.forEach(w => {
+      w.g.position.y = w.y0 - h(w.xs + o) * kh;
+      w.o.quaternion.copy(w.q0).multiply(q.setFromAxisAngle(X, w.sgn * roll));
+    });
+    const sR = hs(XR + o), sF = hs(XF + o);
+    body.position.y = R - (sR + sF) / 2 * kh;
+    body.rotation.z = Math.atan2(-(sF - sR) * kh, wb);
+
+    // cámara: camioneta a la derecha en desktop, centrada en mobile
+    const narrow = camera.aspect < 1;
+    camera.position.set(narrow ? 3 : 4.2, 2, narrow ? 12 : 11);
+    camera.lookAt(narrow ? .3 : -2.4, .8, 0);
+  }
+});
+else wheelP.then(src => {
+  const host = document.getElementById('sus3d');
+  const { spinner } = makeWheel(src);
+  spinner.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  const face = new THREE.Group(); face.rotation.y = -Math.PI / 2; face.add(spinner); // eje de la rueda en Z
+  const wheelG = new THREE.Group(); wheelG.add(face);
+
+  const v = view(host, 32, update, true);
+  v.key = () => sus.off;
+  const { scene, camera } = v;
+  scene.add(wheelG);
+  scene.fog = new THREE.Fog(0x0D0D0D, 9, 22);
+
+  const M = (color, metalness, roughness) => new THREE.MeshStandardMaterial({ color, metalness, roughness });
+  const chrome = M(0xe5e7eb, 1, .15), orange = M(0xff4500, .6, .3), dark = M(0x2b2b2b, .8, .4), red = M(0xe63946, .5, .3);
+  const cyl = new THREE.CylinderGeometry(1, 1, 1, 28);
+  const part = (mat, r) => { const m = new THREE.Mesh(cyl, mat); m.userData.r = r; m.castShadow = true; scene.add(m); return m; };
+  const Yv = new THREE.Vector3(0, 1, 0), d = new THREE.Vector3();
+  const link = (m, a, b) => {
+    d.subVectors(b, a); const L = d.length();
+    m.position.copy(a).addScaledVector(d, .5);
+    m.quaternion.setFromUnitVectors(Yv, d.normalize());
+    m.scale.set(m.userData.r ?? 1, L, m.userData.r ?? 1);
+  };
+
+  class Helix extends THREE.Curve { getPoint(t, o = new THREE.Vector3()) { const a = t * TAU * 7; return o.set(Math.cos(a) * .26, t - .5, Math.sin(a) * .26); } }
+  const spring = new THREE.Mesh(new THREE.TubeGeometry(new Helix(), 500, .045, 10), red); spring.castShadow = true; scene.add(spring);
+  const shockBody = part(orange, .11), shaft = part(chrome, .045), seatLo = part(dark, .34), seatHi = part(dark, .34), reservoir = part(orange, .08);
+  const knuckle = part(dark, .09), spindle = part(chrome, .08);
+  const arms = [0, 1, 2, 3].map(() => part(dark, .055));
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(14, .38, .3), dark); frame.castShadow = true;
+  const tower = new THREE.Mesh(new THREE.BoxGeometry(.5, .9, .5), dark); tower.castShadow = true;
+  scene.add(frame, tower);
+
+  // terreno: mismo perfil que la telemetría
+  const k = .012, kh = .009, toSvg = x => XS + x / k;
+  const geo = new THREE.PlaneGeometry(30, 12, 180, 12); geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position;
+  const ground = new THREE.Mesh(geo, M(0x2e1c10, 0, 1)); ground.material.flatShading = true; ground.receiveShadow = true;
+  const ROCKS = 22, rocks = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(.16, 0), M(0x3b2a20, 0, .9), ROCKS);
+  rocks.material.flatShading = true; rocks.castShadow = rocks.receiveShadow = true;
+  scene.add(ground, rocks);
+
+  const sun = lights(scene, 1.1);
+  sun.position.set(4, 8, 5); sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 1, far: 25 });
+
+  const P = (x, y, z) => new THREE.Vector3(x, y, z);
+  const m4 = new THREE.Matrix4(), rq = new THREE.Quaternion(), rp = new THREE.Vector3(), rs = new THREE.Vector3(), Xv = new THREE.Vector3(1, 0, 0);
+  function update() {
+    const o = sus.off;
+    for (let i = 0; i < pos.count; i++) {
+      const s = toSvg(pos.getX(i)) + o, z = pos.getZ(i);
+      pos.setY(i, -h(s) * kh + (Math.abs(z) > .6 ? .1 * Math.sin(s * .09 + z * 2.3) : 0));
+    }
+    pos.needsUpdate = true; // flatShading: normales en el shader
+    for (let i = 0; i < ROCKS; i++) {
+      const span = 30 / k, s = ((i * 113.7 - o) % span + span) % span, x = s * k - 15, z = ((i * 37) % 11) - 5.5;
+      if (Math.abs(z) < .7) { rocks.setMatrixAt(i, m4.makeScale(0, 0, 0)); continue; } // fuera de la huella
+      rp.set(x, -h(toSvg(x) + o) * kh, z); rs.setScalar(.6 + (i % 5) * .4); rq.setFromAxisAngle(Xv, i);
+      rocks.setMatrixAt(i, m4.compose(rp, rq, rs));
+    }
+    rocks.instanceMatrix.needsUpdate = true;
+
+    const yW = 1 - h(XS + o) * kh;      // rueda: terreno real
+    const yB = 1.25 - hs(XS + o) * kh;  // chasis: terreno suavizado
+    wheelG.position.y = yW;
+    spinner.rotation.x = -(o * k);      // rodadura (radio 1)
+
+    const lb = P(0, yW - .38, -.62), ub = P(0, yW + .42, -.62);
+    link(knuckle, lb, ub); link(spindle, P(0, yW, -.62), P(0, yW, -.2));
+    [[lb, P(.55, yB - .25, -2)], [lb, P(-.55, yB - .25, -2)], [ub, P(.45, yB + .5, -1.85)], [ub, P(-.45, yB + .5, -1.85)]].forEach(([a, b], i) => link(arms[i], a, b));
+    frame.position.set(0, yB - .2, -2.1);
+
+    // coilover: cuerpo naranja abajo, vástago cromado arriba, resorte entre platillos
+    const sl = P(0, yW - .28, -1.0), su = P(0, yB + 1.45, -1.3);
+    tower.position.set(0, su.y + .3, su.z - .1);
+    link(shockBody, sl, sl.clone().lerp(su, .55));
+    link(shaft, su, sl);
+    const dir = su.clone().sub(sl).normalize();
+    const lo = sl.clone().addScaledVector(dir, .38), hi = su.clone().addScaledVector(dir, -.12);
+    link(seatLo, lo, lo.clone().addScaledVector(dir, .05));
+    link(seatHi, hi.clone().addScaledVector(dir, -.05), hi);
+    link(spring, lo, hi);
+    link(reservoir, su.clone().add(P(.22, -.15, 0)), su.clone().add(P(.22, -.75, 0)));
+
+    const narrow = camera.aspect < 1;
+    camera.position.set(narrow ? 5 : 5.4, narrow ? 3.2 : 2.7, narrow ? 9.5 : 5.2);
+    camera.lookAt(narrow ? -.5 : -2, narrow ? 2 : 1.2, -1);
+  }
+});
+
+(function loop() {
+  for (const v of views) {
+    if (!v.visible) continue;
+    const k = v.key();
+    if (k === v.k && !v.dirty) continue; // nada cambió: no redibujar
+    v.k = k; v.dirty = false;
+    v.update(); v.renderer.render(v.scene, v.camera);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
